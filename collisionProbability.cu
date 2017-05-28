@@ -4,29 +4,29 @@
 float collisionProbability(float *d_obstacles, int obstaclesCount, float *d_xcomb, float offsetMult, float *d_path, int T)
 {
 	float *d_debugOutput;
-	CUDA_ERROR_CHECK(cudaMalloc(&d_debugOutput, sizeof(float)*numMCSamples*DIM));
+	CUDA_ERROR_CHECK(cudaMalloc(&d_debugOutput, sizeof(float)*numMCParticles*DIM));
 
 	// double t_cpStart = std::clock();
-	thrust::device_vector<int> d_isCollision(numMCSamples);
+	thrust::device_vector<int> d_isCollision(numMCParticles);
 	int* d_isCollision_ptr = thrust::raw_pointer_cast(d_isCollision.data());
 
 	const int blockSize = 64;
-	const int gridSize = std::min((numMCSamples + blockSize - 1) / blockSize, 2147483647);
+	const int gridSize = std::min((numMCParticles + blockSize - 1) / blockSize, 2147483647);
 	MCCP<<<gridSize,blockSize>>>(d_isCollision_ptr, d_path, d_xcomb, offsetMult, d_obstacles, obstaclesCount, T, d_debugOutput);
 	cudaDeviceSynchronize();
 	cudaError_t code = cudaPeekAtLastError();
 		if (cudaSuccess != code) { std::cout << "ERROR on MCCP: " << cudaGetErrorString(code) << std::endl; }
 
-	// int isCollision[numMCSamples];
-	// cudaMemcpy(isCollision, d_isCollision_ptr, sizeof(int)*numMCSamples, cudaMemcpyDeviceToHost);
-	// printArray(isCollision, 1, numMCSamples, std::cout);
+	// int isCollision[numMCParticles];
+	// cudaMemcpy(isCollision, d_isCollision_ptr, sizeof(int)*numMCParticles, cudaMemcpyDeviceToHost);
+	// printArray(isCollision, 1, numMCParticles, std::cout);
 
-	// float debugOutput[numMCSamples*DIM];
-	// cudaMemcpy(debugOutput, d_debugOutput, sizeof(float)*DIM*numMCSamples, cudaMemcpyDeviceToHost);
-	// printArray(debugOutput, numMCSamples, DIM, std::cout);
+	// float debugOutput[numMCParticles*DIM];
+	// cudaMemcpy(debugOutput, d_debugOutput, sizeof(float)*DIM*numMCParticles, cudaMemcpyDeviceToHost);
+	// printArray(debugOutput, numMCParticles, DIM, std::cout);
 
 	int numCollisions = thrust::reduce(d_isCollision.begin(), d_isCollision.end());
-	float cp = ((float) numCollisions)/((float) numMCSamples);
+	float cp = ((float) numCollisions)/((float) numMCParticles);
 
 	// double t_cp = (std::clock() - t_cpStart) / (double) CLOCKS_PER_SEC;
 	// double ms = 1000;
@@ -41,7 +41,7 @@ void MCCP(int *isCollision, float *path, float *xcomb, float offsetMult,
 	float *obstacles, int obstaclesCount, int T, float *debugOutput) 
 {
 	int particleIdx = blockIdx.x * blockDim.x + threadIdx.x;
-	if (particleIdx >= numMCSamples) 
+	if (particleIdx >= numMCParticles) 
 		return;
 	isCollision[particleIdx] = 0;
 

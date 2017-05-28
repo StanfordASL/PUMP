@@ -13,6 +13,5 @@ Generates hyperrectangular obstacle sets
 
 #include "helper.cuh"
 
-int getObstaclesCount(); // return number of obstacles
-void generateObstacles(float* obstacles, int obstaclesLength); // create obstacle array
+void generateObstacles(std::vector<float>& obstacles); // fill obstacle vector
 void inflateObstacles(float *obstacles, float *obstaclesInflated, float inflateFactor, int obstaclesCount);

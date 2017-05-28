@@ -1,20 +1,14 @@
 DIM ?= 6
 NUM ?= 1000
-RUNS ?= 1
 
 CXX=nvcc
-CXXFLAGS=-O3 -arch=sm_30 -rdc=true -D DIM=$(DIM) -D NUM=$(NUM) -D RUNS=$(RUNS) 
+CXXFLAGS=-O3 -arch=sm_52 -rdc=true -D DIM=$(DIM) -D NUM=$(NUM)
 
-PUMP=testPUMP.cu helper.cu obstacles.cu sampler.cu bvls.cu hsmc.cu collisionCheck.cu 2pBVP.cu CCGMT.cu hardCoded.cu collisionProbability.cu
+PUMP=mainPUMP.cu helper.cu obstacles.cu sampler.cu bvls.cu hsmc.cu collisionCheck.cu 2pBVP.cu PUMP.cu hardCoded.cu collisionProbability.cu motionPlanningProblem.cu roadMap.cu
 
-INFL=2pBVP.cu discreteLQG.cu testInflation.cu CCGMT.cu bvls.cu hardCoded.cu obstacles.cu FMT.cu collisionCheck.cu helper.cu precomp.cu GMT.cu collisionProbability.cu hsmc.cu sampler.cu
-
-pump: $(PUMP)
+pump: $({PUMP})
 	$(CXX) $(CXXFLAGS) $(PUMP) -o $@ 
 
-infl: $(INFL)
-	$(CXX) $(CXXFLAGS) $(INFL) -o $@ 
-
 clean:
-	rm -f *.o *~ *~ pump infl
+	rm -f *.o *~ *~ pump
 	rm -rf *.dSYM

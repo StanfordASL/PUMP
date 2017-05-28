@@ -18,6 +18,17 @@ This file includes helper methods used throughout the code.
 
 #define _USE_MATH_DEFINES
 
+// A macro for checking the error codes of cuda runtime calls
+#define CUDA_ERROR_CHECK(expr) \
+  {                            \
+    cudaError_t err = expr;    \
+    if (err != cudaSuccess)    \
+    {                          \
+      printf("CUDA call failed!\n\t%s\n", cudaGetErrorString(err)); \
+      exit(1);                 \
+    }                          \
+  }
+
 void printArray(float* array, int dim1, int dim2, std::ostream &stream);
 void printArray(int* array, int dim1, int dim2, std::ostream &stream);
 void printArray(bool* array, int dim1, int dim2, std::ostream &stream);

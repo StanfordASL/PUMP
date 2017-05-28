@@ -23,10 +23,9 @@ requirements, this may actually be ideal.
 #include "collisionCheck.cuh"
 #include "helper.cuh"
 #include "hardCoded.cuh"
-#include "CCGMT.cuh"
 
 // const int T = 43; // number of time steps
-// const int numMCSamples = 32; // will be 1024
+// const int numMCParticles = 32; // will be 1024
 float collisionProbability(float *d_obstacles, int obstaclesCount, float *d_xcomb, float offsetMult, float *d_path, int T);
 
 __global__ void MCCP(int *isCollision, float *path, float *xcomb, float offsetMult, 

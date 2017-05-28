@@ -1,8 +1,6 @@
 #include "2pBVP.cuh"
 
 const float g = -9.81;
-const float dtau = 0.000001;
-float TOL = 0.0001;
 
 float findOptimalPath(float dt, float *splitPath, float *xs, int numWaypoints, int *pathLength)
 {
@@ -70,6 +68,7 @@ float findDiscretizedPath(float *splitPath, float *x0, float *x1, int numDisc)
     return topt;
 }
 
+__host__ __device__
 float toptBisection(float *x0, float *x1, float tmax)
 {
 	float tu = tmax;
@@ -84,7 +83,7 @@ float toptBisection(float *x0, float *x1, float tmax)
     float dcval = 1;
     int maxItrs = 50;
     int itr = 0;
-    while (abs(dcval) > TOL && itr < maxItrs && ++itr) {
+    while (abs(dcval) > 0.0001 && itr < maxItrs && ++itr) {
         topt = (tu+tl)/2;
         dcval = dcost(topt,x0,x1);
         if (dcval > 0)
@@ -95,6 +94,7 @@ float toptBisection(float *x0, float *x1, float tmax)
 	return topt;
 }
 
+__host__ __device__
 float cost(float tau, float *x0, float *x1)
 {
 	float cost = (1/pow(tau,3))*(12*pow(x0[0],2) + 12*pow(x0[2],2) + 12*pow(x0[1],2) + 12*pow(x1[0],2) + 12*pow(x1[2],2) - 24*x0[1]*x1[1] + 
@@ -106,8 +106,10 @@ float cost(float tau, float *x0, float *x1)
 	return cost;
 }
 
+__host__ __device__
 float dcost(float tau, float *x0, float *x1)
 {
+    float dtau = 0.000001;
 	float dcost = (cost(tau+dtau/2,x0,x1) - cost(tau-dtau/2,x0,x1))/dtau;
 	return dcost;
 }
@@ -126,4 +128,23 @@ void pathPoint(float t, float tau, float *x0, float *x1, float *x)
             (3*pow(t,2)*(2*x0[1] - 2*x1[1] + x1[4]*tau))/pow(tau,3) + (x0[4]*(3*pow(t,2) - 4*t*tau + pow(tau,2)))/pow(tau,2), 
 	x[5] = (x0[5]*pow(tau,3) + t*tau*(-6.*x0[2] + 6.*x1[2] - 4.*x0[5]*tau - 2.*x1[5]*tau) + 
              pow(t,2)*(6.*x0[2] - 6.*x1[2] + 3.*x0[5]*tau + 3.*x1[5]*tau))/pow(tau,3);
+}
+
+__global__ 
+void fillCoptsTopts(float *samples, float *copts, float *topts, float tmax) {
+    int tid = blockIdx.x * blockDim.x + threadIdx.x;
+    if (tid >= NUM*NUM)
+        return;
+
+    int i = tid/NUM;
+    int j = tid%NUM;
+    if (i == j) // connection to the same node
+        return;
+
+    int idx = i*(NUM-1)+j;
+    if (i < j) 
+        idx--;
+    
+    topts[idx] = toptBisection(&(samples[i*DIM]), &(samples[j*DIM]), tmax);
+    copts[idx] = cost(topts[idx], &(samples[i*DIM]), &(samples[j*DIM]));
 }

@@ -1,12 +1,5 @@
 #include "GMT.cuh"
 
-void GMT(float *initial, float *goal, float *d_obstacles, int obstaclesCount,
-	float *d_distancesCome, int *d_nnGoEdges, int *d_nnComeEdges, int nnSize, float *d_samples, int samplesCount,
-	float lambda, float r, float *d_costs, int *d_edges, int initial_idx, int goal_idx)
-{
-
-}
-
 void GMTwavefront(float *initial, float *goal, float *d_obstacles, int obstaclesCount,
 	float *d_distancesCome, int *d_nnGoEdges, int *d_nnComeEdges, int nnSize, float *d_discMotions, int *d_nnIdxs,
 	float *d_samples, int samplesCount, bool *d_isFreeSamples, float r, int numDisc,
@@ -27,7 +20,7 @@ void GMTwavefront(float *initial, float *goal, float *d_obstacles, int obstacles
 	bool *d_wavefrontNew_ptr = thrust::raw_pointer_cast(d_wavefrontNew.data());
 	int *d_wavefrontScanIdx_ptr = thrust::raw_pointer_cast(d_wavefrontScanIdx.data());
 	int *d_wavefrontActiveIdx_ptr = thrust::raw_pointer_cast(d_wavefrontActiveIdx.data());
-
+ 
 	cudaMalloc(&d_wavefrontWas, sizeof(bool)*samplesCount);
 	cudaMalloc(&d_unvisited, sizeof(bool)*samplesCount);
 	cudaMalloc(&d_costGoal, sizeof(float));
