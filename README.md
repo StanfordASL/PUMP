@@ -1,6 +1,6 @@
 # Parallel Uncertainty-aware Multiobjective Planning
 
-This repo contains the code for "Real-Time Stochastic Kinodynamic Motion Planning via Multiobjective Search on GPUs," which presents the parallel uncertainty-aware multiobjective planning algorithm submitted to WAFR '16 for solving the stochastic kinodynamic motion planning problem.
+This repo contains the code for "Real-Time Stochastic Kinodynamic Motion Planning via Multiobjective Search on GPUs," which presents the parallel uncertainty-aware multiobjective planning algorithm submitted to ICRA '17 for solving the stochastic kinodynamic motion planning problem.
 
 It is written in CUDA C and setup to run a 3D double integrator (in a 6D configuration space). PUMP can be compiled with 
 `$ make pump NUM=<sample count>` (e.g. `$ make pump NUM=4000`) 
