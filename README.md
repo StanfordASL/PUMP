@@ -5,7 +5,10 @@ This repo contains the code for "Real-Time Stochastic Kinodynamic Motion Plannin
 It is written in CUDA C and setup to run a 3D double integrator (in a 6D configuration space). PUMP can be compiled with 
 `$ make pump NUM=<sample count>` (e.g. `$ make pump NUM=4000`) 
 and run with 
-`$ ./pump <cp target> <eta>` (e.g., `$ ./pump 0.01 2`). This runs out of the testPUMP.cu main file. 
+`$ ./pump <input file name> <cp target> <eta>` (e.g., `$ ./pump input.txt 0.01 2`). This runs out of the mainPUMP.cu main file. 
+
+The input file contains all the necessary run settings for a planning problem. It is structured as a csv where each line respectively represents initial state, goal state, state space lower bound, state space upper bound, noise multiplier, number of obstacles, and the obstacles.
+The obstacles are enumerated as cubes in 6D with the lowest corner listed first and the highest corner listed second.
 
 # Disclaimer
 
