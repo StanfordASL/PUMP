@@ -8,7 +8,7 @@ and run with
 `$ ./pump <input file name> <cp target> <eta>` (e.g., `$ ./pump input.txt 0.01 2`). This runs out of the mainPUMP.cu main file. 
 
 The input file contains all the necessary run settings for a planning problem. It is structured as a csv where each line respectively represents initial state, goal state, state space lower bound, state space upper bound, noise multiplier, number of obstacles, and the obstacles.
-The obstacles are enumerated as cubes in 6D with the lowest corner listed first and the highest corner listed second.
+The obstacles are enumerated as bounding boxes in 6D with the lowest corner listed first and the highest corner listed second.
 
 # Disclaimer
 
